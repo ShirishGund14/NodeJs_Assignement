@@ -3,7 +3,9 @@ const mongoose= require('mongoose');
 require('dotenv').config();
 const cors=require('cors');
 const bodyParser=require('body-parser');
-const adminLogin=require('./Routes/AdminRoutes/adminLogin')
+const adminAuth=require('./Routes/AdminRoutes');
+const userAuth=require('./Routes/UserRoutes');
+
 const db=require('./dbConfig')
 
 
@@ -13,12 +15,9 @@ app.use(bodyParser.json());
 app.use(cors());
 
 
-
-
-
 //ALL routs
-app.use('/admin-api',adminLogin);
-// app.use('/user-api',userLogin);
+app.use('/admin-api',adminAuth);
+app.use('/user-api',userAuth);
 
 
 app.listen(process.env.PORT,()=>{

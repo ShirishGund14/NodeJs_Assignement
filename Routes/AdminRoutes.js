@@ -5,16 +5,16 @@ const bcrypt=require('bcrypt');
 const usermodel= require('../Models/UserModel')
 
 
-//create User api
-//http://localhost:8080/user-api/create
+//createAdmin api
+//http://localhost:8080/admin-api/create
 router.post('/create',async(req,res)=>{
     try {
 
         const {name,email,phone,password,role,profile_url}=req.body;
         console.log(name,email,phone,password,role);
-        if(role!='User'){
+        if(role!='Admin'){
             return res.json({
-                msg:'Acesss denied ,!only users are allowed',
+                msg:'Acesss denied ,!only admins are allowed',
                 success:false
             })
         }
@@ -27,7 +27,7 @@ router.post('/create',async(req,res)=>{
 
         const hashedpass=await bcrypt.hash(password,12);
 
-        const user= new usermodel({
+        const admin= new usermodel({
             name,
             email,
             phone,
@@ -36,24 +36,24 @@ router.post('/create',async(req,res)=>{
             role:role
         })
 
-        await user.save();
+        await admin.save();
         return res.status(200).json({
-            msg:'new User created',
+            msg:'new Admin created',
             success:true
         })
         
     } catch (error) {
-        console.error('Error while creating User:', error);
+        console.error('Error while creating admin:', error);
         res.status(500).json({
-             'error while createing User':error,
+             'error while createing admin':error,
              success:false
         })
     }
 })
 
 
-//Login user api
-//http://localhost:8080/user-api/login
+//LoginAdmin api
+//http://localhost:8080/admin-api/login
 router.post('/login',async(req,res)=>{
     try {
 
@@ -66,24 +66,24 @@ router.post('/login',async(req,res)=>{
             })
         }
 
-        const userFound=await usermodel.findOne({email});
+        const adminFound=await usermodel.findOne({email});
 
-        if(!userFound){
+        if(!adminFound){
             return res.status(205).json({
                 success:false,
-                msg:'User not found '
+                msg:'Admin not found '
             })
         }
 
         // console.log(name,email,phone,password,role);
-        if(userFound.role!='User'){
+        if(adminFound.role!='Admin'){
             return res.json({
-                msg:'only users are allowed',
+                msg:'Acesss denied ,!only admins are allowed',
                 success:false,
             })
         }
 
-        const match=await bcrypt.compare(password,userFound.password);
+        const match=await bcrypt.compare(password,adminFound.password);
         if(!match){
             return res.status(205).json({
                 success:false,
@@ -92,27 +92,48 @@ router.post('/login',async(req,res)=>{
         }
        
         //create and assign token
-        const token = jwt.sign({ payload: userFound._id }, process.env.TOKEN_SECRET, { expiresIn: '73d' })
+        const token = jwt.sign({ payload: adminFound._id }, process.env.TOKEN_SECRET, { expiresIn: '73d' })
         res.send({
             success: true,
-            msg: 'USER Logged in Succesfully !!',
+            msg: 'Admin Logged in Succesfully !!',
             data: token,
         })
 
         
         
     } catch (error) {
-        console.error('Error while logging user:', error);
+        console.error('Error while logging admin:', error);
         res.status(500).json({
-             'error while user login ':error,
+             'error while admin login ':error,
              success:false
         })
     }
 })
 
 
-// user route to update user details
-// http://localhost:8080/user-api/UpdateUser/:userId
+//get all users
+// http://localhost:8080/admin-api/Allusers
+router.get('/Allusers', async (req, res) => {
+    try {
+        // Check if the user making the request has admin role
+        // if (req.user.role !== 'Admin') {
+        //     return res.status(403).json({ message: 'Access forbidden. Admin rights required.' });
+        // }
+
+        // Fetch all users from the database
+        const Allusers = await usermodel.find({}, '-password'); // Exclude the password field
+        
+        
+        res.status(200).json(Allusers);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Internal server error' });
+    }
+});
+
+
+// Admin route to update user details
+// http://localhost:8080/admin-api/Allusers/:userId
 router.put('/UpdateUser/:userId', async (req, res) => {
     try {
 
@@ -171,7 +192,7 @@ router.put('/UpdateUser/:userId', async (req, res) => {
 
 
 // Admin route to delete a user
-// http://localhost:8080/user-api/DeleteUser/:userId
+// http://localhost:8080/admin-api/DeleteUser/:userId
 router.delete('/DeleteUser/:userId', async (req, res) => {
     try {
 
@@ -182,10 +203,10 @@ router.delete('/DeleteUser/:userId', async (req, res) => {
 
         // Check if the user was found and deleted
         if (!deletedUser) {
-            return res.status(404).json({ msg: 'User Account not found' });
+            return res.status(404).json({ msg: 'User not found' });
         }
 
-        res.status(200).json({ msg: 'User Account Deleted successfully' });
+        res.status(200).json({ msg: 'User deleted successfully' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Internal server error' });
@@ -193,17 +214,6 @@ router.delete('/DeleteUser/:userId', async (req, res) => {
 });
 
 
-
-// http://localhost:8080/admin-api/Get-current-user
-// router.get('/Get-current-user', async (req, res) => {
-//     try {
-//         const CurrentUser = await usermodel.find({},); 
-//         res.status(200).json(CurrentUser);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ msg: 'Internal server error' });
-//     }
-// });
 
 
 module.exports=router;
