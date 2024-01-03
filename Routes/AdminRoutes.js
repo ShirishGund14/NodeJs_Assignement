@@ -11,7 +11,8 @@ router.post('/create',async(req,res)=>{
     try {
 
         const {name,email,phone,password,role,profile_url}=req.body;
-        console.log(name,email,phone,password,role);
+        
+
         if(role!='Admin'){
             return res.json({
                 msg:'Acesss denied ,!only admins are allowed',
@@ -22,6 +23,16 @@ router.post('/create',async(req,res)=>{
             return res.json({
                 msg:"all fields are necessary",
                 success:false
+            })
+        }
+
+        console.log("Adminroutes",name,email,phone,password,role);
+        const adminFound=await usermodel.findOne({email});
+        console.log(adminFound)
+        if(adminFound){
+            return res.status(203).json({
+                success:false,
+                msg:'Already Registered .....Login '
             })
         }
 

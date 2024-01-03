@@ -113,59 +113,59 @@ router.post('/login',async(req,res)=>{
 
 // user route to update user details
 // http://localhost:8080/user-api/UpdateUser/:userId
-router.put('/UpdateUser/:userId', async (req, res) => {
+router.put('/updateUser/:userId', async (req, res) => {
     try {
-
         const userId = req.params.userId;
         const updatedUserData = req.body;
 
-        // Check if the new phone number is already in use by another user
-        if (updatedUserData.phone) {
-            const existingUserWithPhone = await usermodel.findOne({ 
-                phone: updatedUserData.phone,
-                 _id: { $ne: userId } 
-                });
+        // Fetch the existing user data from the database
+        const existingUser = await usermodel.findById(userId);
 
-            if (existingUserWithPhone) {
-                return res.status(400).json({ 
-                    msg: 'Phone number is already in use by another user.',
-                     success: false });
-            }
+        // Check if the user was found
+        if (!existingUser) {
+            return res.status(404).json({ 
+                msg: 'User not found',
+                success: false 
+            });
         }
 
-        // Check if the new email address is already in use by another user
-        if (updatedUserData.email) {
-            const existingUserWithEmail = await usermodel.findOne({ 
-                email: updatedUserData.email,
-                 _id: { $ne: userId } 
-                });
-            if (existingUserWithEmail) {
-                return res.status(400).json({ 
-                    msg: 'Email address is already in use by another user.', 
-                    success: false });
-            }
+        // Check if email or phone is being changed
+        if (updatedUserData.email && updatedUserData.email !== existingUser.email) {
+            return res.status(400).json({ 
+                msg: 'Email cannot be changed',
+                success: false 
+            });
         }
+
+        if (updatedUserData.phone && updatedUserData.phone !== existingUser.phone) {
+            return res.status(400).json({ 
+                msg: 'Phone cannot be changed',
+                success: false 
+            });
+        }
+
+        // Ensure that email and phone cannot be changed
+        updatedUserData.email = existingUser.email;
+        updatedUserData.phone = existingUser.phone;
 
         // Update the user details in the database
         const updatedUser = await usermodel.findByIdAndUpdate(userId, updatedUserData, { new: true });
 
-        // Check if the user was found and updated
-        if (!updatedUser) {
-            return res.status(404).json({ 
-                msg: 'User not found',
-                 success: false });
-        }
-
         res.status(200).json({ 
             msg: 'User updated successfully', 
-           success: true, user: updatedUser });
+            success: true, 
+            user: updatedUser
+        });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({
-             msg: 'Internal server error', 
-             success: false });
+            msg: 'Internal server error', 
+            success: false 
+        });
     }
 });
+
 
 
 
