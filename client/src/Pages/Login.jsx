@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import './signup.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import{useNavigate} from 'react-router-dom';
 
 const Login = () => {
+
+  const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [inputs, setInputs] = useState({
-    name: '',
     email: '',
-    phone: '',
     password: '',
-    profile_url: 'pfp url',
+    role: 'User',
   });
 
-  const [isAdmin, setIsAdmin] = useState(false);
+
 
   const handleOnChange = (e) => {
     setInputs((prevState) => ({
@@ -26,48 +31,37 @@ const Login = () => {
   const handleSubmit = async () => {
     try {
       const {  email, password } = inputs;
-
-      // Check if the user is trying to register as an admin
       const role = isAdmin ? 'Admin' : 'User';
-
-      // Prepare data for the API call
       const userData = {
         email,
         password,
+        role
       };
-
-      // Choose the API endpoint based on the role
-      const apiEndpoint = isAdmin
-        ? 'http://localhost:8080/admin-api/login'
-        : 'http://localhost:8080/user-api/login';
-
-      // Make a POST request to the backend API to create a new user
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      const result = await response.json();
-
-      // Handle the response from the server
-      if (result.success) {
-        console.log(result.msg);
-        // You can redirect the user or show a success message here
-      } else {
-        console.error(result.msg);
-        // Handle registration failure, show an error message, etc.
-      }
+      const apiEndpoint = isAdmin ? 'http://localhost:8080/admin-api/login': 'http://localhost:8080/user-api/login';
+      
+      const {data}=await axios.post(`${apiEndpoint}`,userData);
+       console.log('response from backend ',data);
+        
+      if (data.success) {
+        console.log('response in if',data.msg);
+        toast.success(data.msg);  // Successful login
+        // navigate('/user')
+        
+    } else {
+        console.log('response error',data.msg);
+        console.log('else error loop',data)
+        toast.error(data.msg); // Handle other status codes if needed
+    }
+    
     } catch (error) {
-      console.error('Error during user registration:', error);
-      // Handle unexpected errors
+      console.error('Error during  Login:', error);
     }
   };
 
   return (
     <>
+
+    <ToastContainer/>
       <div>
 
         <input
@@ -94,7 +88,7 @@ const Login = () => {
           onChange={handleCheckboxChange}
         />
         <label htmlFor="isAdmin">Admin ?</label>
-        <button onClick={handleSubmit}>Signup</button>
+        <button onClick={handleSubmit}>Login</button>
       </div>
     </>
   );

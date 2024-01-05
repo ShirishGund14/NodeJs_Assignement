@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
 import './signup.css';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
+import{useNavigate} from 'react-router-dom';
+
+
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Signup = () => {
   const [inputs, setInputs] = useState({
@@ -7,10 +14,11 @@ const Signup = () => {
     email: '',
     phone: '',
     password: '',
-    profile_url: 'pfp url',
+    profile_url: ' ',
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     setInputs((prevState) => ({
@@ -25,58 +33,70 @@ const Signup = () => {
 
   const handleSubmit = async () => {
     try {
-      const { name, email, phone, password } = inputs;
 
-      // Check if the user is trying to register as an admin
+      const { name, email, phone, password } = inputs;
       const role = isAdmin ? 'Admin' : 'User';
 
-      // Prepare data for the API call
       const userData = {
         name,
         email,
         phone,
         password,
         role,
-        // Add any other necessary fields here
+        
       };
 
-      // Choose the API endpoint based on the role
-      console.log(role)
-      const apiEndpoint = isAdmin
-        ? 'http://localhost:8080/admin-api/create'
-        : 'http://localhost:8080/user-api/create';
+   
+      //console.log(role)
+      const apiEndpoint = isAdmin ? 'http://localhost:8080/admin-api/create': 'http://localhost:8080/user-api/create';
+      // console.log(apiEndpoint);
+      
+      try {
+        const response=await axios.post(`${apiEndpoint}`,userData);
+        console.log('response data',response.data);
+        
+        if(response.data.success){
+          toast.success(response.data.msg);
+          navigate('/login')
+        }
+        else{
+          toast.error(response.data.msg);
+        }
 
-
-
-        console.log(apiEndpoint);
-      // Make a POST request to the backend API to create a new user
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      const result = await response.json();
-
-      // Handle the response from the server
-      if (result.success) {
-        console.log(result.msg);
-        // You can redirect the user or show a success message here
-      } else {
-        console.error(result.msg);
-        // Handle registration failure, show an error message, etc.
+      } catch (error) {
+        console.log(error);
       }
+
+
+
+      
+      // const response = await fetch(apiEndpoint, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(userData),
+      // });
+
+      // const result = await response.json();
+
+      
+      // if (result.success) {
+      //   toast.success(result.msg);
+      //   // console.log(result.msg);
+      // } else {
+      //   toast.error(result.msg);
+      // }
+
     } catch (error) {
       console.error('Error during user registration:', error);
-      // Handle unexpected errors
     }
   };
 
   return (
     <>
-      <div>
+    <ToastContainer />
+      <div className='containerbox'>
         <input
           type="text"
           name="name"
@@ -107,6 +127,7 @@ const Signup = () => {
           onChange={handleOnChange}
         />
         {/* <label htmlFor="role">Select Role:</label> */}
+        <div className='box'>
         <input
           type="checkbox"
           id="isAdmin"
@@ -114,7 +135,8 @@ const Signup = () => {
           checked={isAdmin}
           onChange={handleCheckboxChange}
         />
-        <label htmlFor="isAdmin">Admin ? </label>
+        <label htmlFor="isAdmin" className='name'>Admin ? </label>
+        </div>
         <button onClick={handleSubmit}>Signup</button>
       </div>
     </>

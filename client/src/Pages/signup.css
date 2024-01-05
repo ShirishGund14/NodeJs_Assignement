@@ -21,6 +21,9 @@ body {
   .input-group {
     margin-bottom: 15px;
   }
+  .containerbox{
+    border: solid black;
+  }
   
   input {
     width: 100%;
@@ -55,6 +58,11 @@ body {
   
   button:hover {
     background-color: #45a049;
+  }
+
+  .box{
+    display: flex;
+
   }
   
   @media (max-width: 600px) {
