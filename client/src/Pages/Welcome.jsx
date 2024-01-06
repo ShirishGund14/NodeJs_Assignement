@@ -1,38 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import{useNavigate} from 'react-router-dom';
 
-axios.defaults.withCredentials = true;
 
 const Welcome = () => {
-
-
-  const [user, setUser] = useState();
-
-  const sendRequest = async () => {
-
-      const res = await axios.get('http://localhost:8080/user-api/UserDetails', {
-        withCredentials: true,
-      }).catch (err=>console.log(err))
-      console.log('welcomepage',res);
-      const data=await res.data;
-      return data;
+  // const [user, setUser] = useState();
+  const navigate = useNavigate();
+  
+  console.log(localStorage.getItem("token"));
+  const GetuserData = async () => {
+    try{
+   
+      const res = await axios.post("http://localhost:8080/user-api/UserDetails",{},
+        {
+          headers: {
+            Authorization: "Bearer "+localStorage.getItem("token"),
+          },
+        }
+      );
+    }
+    catch (err) {
+      console.error('Error fetching user details:', err);
+    }
   };
 
   useEffect(() => {
-    sendRequest().then((data) => setUser(data.CurrentUser));
+    GetuserData();
   }, []);
 
   return (
     <>
-      {user && (
-        <div>
-          <h2>User Details</h2>
-          <h1>{user.name}</h1>
-          <h1>{user.password}</h1>
-          <h1>{user.email}</h1>
-          <h1>{user.phone}</h1>
-        </div>
-      )}
+      WELCOME
     </>
   );
 };

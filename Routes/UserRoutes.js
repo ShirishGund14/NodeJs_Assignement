@@ -1,6 +1,6 @@
 const express=require('express');
 const { CreateUserController, UserLoginController, UserUpdateController, UserDeleteController, UserDetailsController } = require('../Controllers/UserController');
-const { VerifyToken } = require("../Middlewares/VerifyToken");
+const authMiddleware = require("../Middlewares/authMiddleware");
 
 
 
@@ -11,6 +11,6 @@ router.post('/login',UserLoginController)
 router.put('/updateUser/:userId',UserUpdateController);
 router.delete('/DeleteUser/:userId',UserDeleteController);
 
-router.get('/UserDetails',VerifyToken,UserDetailsController);
+router.post('/UserDetails',authMiddleware,UserDetailsController);
 
 module.exports=router;

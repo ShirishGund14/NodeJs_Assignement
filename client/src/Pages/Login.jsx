@@ -40,16 +40,15 @@ const Login = () => {
       const apiEndpoint = isAdmin ? 'http://localhost:8080/admin-api/login': 'http://localhost:8080/user-api/login';
       
       const {data}=await axios.post(`${apiEndpoint}`,userData);
-       console.log('response from backend ',data);
+      // console.log('response from backend ',data);
         
       if (data.success) {
-        console.log('response in if',data.msg);
+      
         toast.success(data.msg);  // Successful login
-        // navigate('/user')
+        localStorage.setItem('token',data.token);
+        navigate('/profile')
         
     } else {
-        console.log('response error',data.msg);
-        console.log('else error loop',data)
         toast.error(data.msg); // Handle other status codes if needed
     }
     

@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const bcrypt=require('bcrypt');
+const bcrypt=require('bcryptjs');
 const usermodel= require('../Models/UserModel')
 
 
@@ -60,7 +60,7 @@ exports.UserLoginController=async(req,res)=>{
     try {
 
         const {email,password,role}=req.body;
-        console.log('userlogin',email,password,role)
+        //console.log('userlogin',email,password,role)
 
         if( !email || !password || !role) {
             return res.json({
@@ -87,7 +87,7 @@ exports.UserLoginController=async(req,res)=>{
         }
 
         const match=await bcrypt.compare(password,userFound.password);
-        console.log('password match',match);
+       // console.log('password match',match);
         if(!match){
 
             console.log('data from backend');
@@ -98,25 +98,14 @@ exports.UserLoginController=async(req,res)=>{
             })
         }
        
-        //create and assign token
-        //const token = jwt.sign({ id: userFound._id }, process.env.TOKEN_SECRET, { expiresIn: '73d' })
-        
-        // res.cookie(String(userFound._id),token,{
-        //     path:'/',
-        //     expires:new Date(Date.now()+7 * 24 * 60 * 60 * 1000),
-        //     httpOnly:true,
-        //     sameSite:'lax',
-        // })
 
 
-        // token generate
-        const token = await userFound.generateAuth;
-        // cookiegenerate
-        res.cookie("usercookie",token,{
-            expires:new Date(Date.now()+9000000),
-            httpOnly:true
-        });
-        
+        const token = jwt.sign({ id: userFound._id }, process.env.TOKEN_SECRET, {
+            expiresIn: "1d",
+          });
+         
+       // console.log('login generated token',token);
+
         return res.status(200).json({
             success: true,
             msg: 'USER Logged in Succesfully !!',
@@ -219,28 +208,62 @@ exports.UserDeleteController=async (req, res) => {
 
 
 
-http://localhost:8080/user-api/UserDetails
-exports.UserDetailsController=async (req, res,next) => {
+// exports.UserDetailsController=async (req, res,next) => {
+//     try {
+//         const userId=req.id;
+//         // console.log(userId)
+//         const CurrentUser = await usermodel.find({_id:userId}); 
+
+//         console.log('Current user details',CurrentUser);
+
+//         if(!CurrentUser){
+//             return res.json({
+//                 status:false,
+//                 msg:'Usr not found'
+//             })
+//         }
+//         return res.status(200).json({
+//             msg:'User details Fetched sucessully',
+//             status:true,
+//             CurrentUser
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ msg: 'Error while Fetching user Details' });
+//     }
+// }
+
+
+// http://localhost:8080/user-api/UserDetails
+exports.UserDetailsController = async (req, res) => {
     try {
-        const userId=req.id;
-        // console.log(userId)
-        const CurrentUser = await usermodel.find({_id:userId}); 
+        console.log('UserDetailsController - Request Body:', req.body);
 
-        console.log('Current user details',CurrentUser);
+        // Assuming the user ID is included in the decoded token by the auth middleware
+        const userId = req.body.userId;
+        console.log('UserDetailsController - User ID:', userId);
 
-        if(!CurrentUser){
+        const currentUser = await usermodel.findOne({ _id: userId });
+        console.log('UserDetailsController -  User:', currentUser);
+
+        if (!currentUser) {
             return res.json({
-                status:false,
-                msg:'Usr not found'
-            })
+                success: false,
+                msg: 'User not found'
+            });
         }
-        return res.status(200).json({
-            msg:'User details Fetched sucessully',
-            status:true,
-            CurrentUser
+
+        res.status(200).json({
+            success: true,
+            msg: 'User details fetched successfully',
+            user:currentUser
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: 'Error while Fetching user Details' });
+        console.error('UserDetailsController - Error:', error);
+        return res.status(500).json({
+            success: false,
+            msg: 'Unable to get current user',
+            error,
+        });
     }
-}
+};
