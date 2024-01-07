@@ -10,17 +10,17 @@ exports.CreateUserController=async(req,res)=>{
 
         const {name,email,phone,password,role,profile_url}=req.body;
         
-
-        if(!name || !email || !password ) {
+       console.log('user form data',req.body);
+        if(!name || !email || !password  || !phone) {
             return res.json({
                 msg:"all fields are necessary",
                 success:false
             })
         }
 
-        console.log("Userroutes",name,email,phone,password,role);
+       // console.log("Userroutes",name,email,phone,password,role);
         const userFound=await usermodel.findOne({email});
-        console.log("userfound",userFound)
+       // console.log("userfound",userFound)
         if(userFound){
             return res.json({
                 success:false,
@@ -36,7 +36,7 @@ exports.CreateUserController=async(req,res)=>{
             phone,
             password:hashedpass,
             profile_url,
-            role:role
+            role
         })
 
         await user.save();
@@ -184,67 +184,43 @@ exports.UserUpdateController=async (req, res) => {
 
 
 
-// Admin route to delete a user
+// user route to delete a user
 // http://localhost:8080/user-api/DeleteUser/:userId
 exports.UserDeleteController=async (req, res) => {
     try {
 
         const userId = req.params.userId;
-
-        // Delete the user from the database
         const deletedUser = await usermodel.findByIdAndDelete(userId);
 
-        // Check if the user was found and deleted
         if (!deletedUser) {
-            return res.json({ msg: 'User Account not found' });
+            return res.json({ 
+                success:false,
+                msg: 'User Account not found'
+             });
         }
 
-        res.status(200).json({ msg: 'User Account Deleted successfully' });
+        res.status(200).json({ 
+            success:true,
+            msg: 'User Account Deleted successfully'
+         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: 'Internal server error' });
+        res.status(500).json({ 
+            success:false,
+            msg: 'Internal server error' 
+        });
     }
 };
 
 
 
-// exports.UserDetailsController=async (req, res,next) => {
-//     try {
-//         const userId=req.id;
-//         // console.log(userId)
-//         const CurrentUser = await usermodel.find({_id:userId}); 
-
-//         console.log('Current user details',CurrentUser);
-
-//         if(!CurrentUser){
-//             return res.json({
-//                 status:false,
-//                 msg:'Usr not found'
-//             })
-//         }
-//         return res.status(200).json({
-//             msg:'User details Fetched sucessully',
-//             status:true,
-//             CurrentUser
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ msg: 'Error while Fetching user Details' });
-//     }
-// }
 
 
-// http://localhost:8080/user-api/UserDetails
 exports.UserDetailsController = async (req, res) => {
     try {
-        console.log('UserDetailsController - Request Body:', req.body);
 
-        // Assuming the user ID is included in the decoded token by the auth middleware
         const userId = req.body.userId;
-        console.log('UserDetailsController - User ID:', userId);
-
-        const currentUser = await usermodel.findOne({ _id: userId });
-        console.log('UserDetailsController -  User:', currentUser);
+        const currentUser = await usermodel.findOne({ _id: userId }).select('-password');
 
         if (!currentUser) {
             return res.json({
@@ -267,3 +243,4 @@ exports.UserDetailsController = async (req, res) => {
         });
     }
 };
+

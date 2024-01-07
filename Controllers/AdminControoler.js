@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const bcrypt=require('bcrypt');
+const bcrypt=require('bcryptjs');
 const usermodel= require('../Models/UserModel')
 
 
@@ -24,10 +24,10 @@ exports.CreateAdminController=async(req,res)=>{
             })
         }
 
-        console.log("Adminroutes",name,email,phone,password,role);
+       // console.log("Adminroutes",name,email,phone,password,role);
         const adminFound=await usermodel.findOne({email});
         
-        console.log("adminfound",adminFound)
+       // console.log("adminfound",adminFound)
         if(adminFound){
             return res.json({
                 success:false,
@@ -97,7 +97,7 @@ exports.AdminLoginController=async(req,res)=>{
         }
 
         const match=await bcrypt.compare(password,adminFound.password);
-        console.log('pasword match',match);
+        //console.log('pasword match',match);
         if(!match){
             console.log('before return  match',match);
             return res.json({
@@ -106,12 +106,15 @@ exports.AdminLoginController=async(req,res)=>{
             })
         }
        
-        //create and assign token
-        const token = jwt.sign({ Userid: adminFound._id }, process.env.TOKEN_SECRET, { expiresIn: '73d' })
+        const token = jwt.sign({ id: adminFound._id }, process.env.TOKEN_SECRET, {
+            expiresIn: "1d",
+          });
+
         return res.status(200).json({
             success: true,
             msg: 'Admin Logged in Succesfully !!',
-            token: token,
+            user:adminFound,
+            token,
         })
 
     } catch (error) {
@@ -128,7 +131,7 @@ exports.AdminLoginController=async(req,res)=>{
 // http://localhost:8080/admin-api/Allusers
 exports.Alluser= async (req, res) => {
     try {
-
+        
         const Allusers = await usermodel.find({}, '-password'); // Exclude the password field
         res.status(200).json(Allusers);
 
@@ -146,7 +149,8 @@ exports.AdminUpdatesUser=async (req, res) => {
 
         const userId = req.params.userId;
         const updatedUserData = req.body;
-
+        
+        console.log('backend new data',updatedUserData);
         // Check if the new phone number is already in use by another user
         if (updatedUserData.phone) {
             const existingUserWithPhone = await usermodel.findOne({ 

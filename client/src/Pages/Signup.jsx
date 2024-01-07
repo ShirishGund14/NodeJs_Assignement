@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './signup.css';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-import{useNavigate} from 'react-router-dom';
+import{Link, useNavigate} from 'react-router-dom';
 
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,10 +14,11 @@ const Signup = () => {
     email: '',
     phone: '',
     password: '',
-    profile_url: ' ',
+    profile_url: 'Default_url',
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const[image,SetImage]=useState('');
   const navigate = useNavigate();
 
   const handleOnChange = (e) => {
@@ -42,15 +43,15 @@ const Signup = () => {
         email,
         phone,
         password,
+        profile_url:image,
         role,
         
       };
 
    
-      //console.log(role)
       const apiEndpoint = isAdmin ? 'http://localhost:8080/admin-api/create': 'http://localhost:8080/user-api/create';
-      // console.log(apiEndpoint);
-      
+   
+     console.log('image info',image);
       try {
         const response=await axios.post(`${apiEndpoint}`,userData);
         console.log('response data',response.data);
@@ -118,7 +119,6 @@ const Signup = () => {
           placeholder="Phone"
           onChange={handleOnChange}
         />
-        <input type="file" name="" id="" />Upload img
         <input
           type="password"
           name="password"
@@ -126,8 +126,14 @@ const Signup = () => {
           placeholder="Password"
           onChange={handleOnChange}
         />
-        {/* <label htmlFor="role">Select Role:</label> */}
+
+        <input  onChange={(e)=>SetImage(e.target.files[0])} type="file" name="" id="" />Upload img
+
+
+
+       <div className='bottom'>
         <div className='box'>
+        <label htmlFor="isAdmin" className='name'>Admin ? </label>
         <input
           type="checkbox"
           id="isAdmin"
@@ -135,9 +141,14 @@ const Signup = () => {
           checked={isAdmin}
           onChange={handleCheckboxChange}
         />
-        <label htmlFor="isAdmin" className='name'>Admin ? </label>
         </div>
+        <div className="bottom">
         <button onClick={handleSubmit}>Signup</button>
+        <div>
+        Already have account ? <Link to={'/login'}>Login </Link>
+        </div>
+        </div>
+       </div>
       </div>
     </>
   );

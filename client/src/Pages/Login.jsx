@@ -3,7 +3,7 @@ import './signup.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import{useNavigate} from 'react-router-dom';
+import{Link, useNavigate} from 'react-router-dom';
 
 const Login = () => {
 
@@ -61,7 +61,7 @@ const Login = () => {
     <>
 
     <ToastContainer/>
-      <div>
+      <div className='containerbox'>
 
         <input
           type="email"
@@ -79,6 +79,9 @@ const Login = () => {
           onChange={handleOnChange}
         />
        
+       <div className='bottom'>
+        <div className='box'>
+        <label htmlFor="isAdmin" className='name'>Admin ? </label>
         <input
           type="checkbox"
           id="isAdmin"
@@ -86,8 +89,15 @@ const Login = () => {
           checked={isAdmin}
           onChange={handleCheckboxChange}
         />
-        <label htmlFor="isAdmin">Admin ?</label>
+        </div>
+        <div className="bottom">
         <button onClick={handleSubmit}>Login</button>
+        <div>
+        Don't have an account ? <Link to={'/'}>Signup </Link>
+        </div>
+        </div>
+       </div>
+        
       </div>
     </>
   );

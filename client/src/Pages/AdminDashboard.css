@@ -1,0 +1,79 @@
+/* General styles for the container */
+.container {
+  max-width: 800px;
+  margin: auto;
+}
+
+h3 {
+  text-align: center;
+}
+
+/* Styles for the user list */
+.heading {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.record {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.record:hover {
+  background-color: #f0f0f0;
+}
+
+.avtar {
+  margin-right: 12px;
+}
+
+.userinfo {
+  display: flex;
+  align-items: center;
+}
+
+/* Modal styles */
+.ModalContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+}
+
+.ModalContent {
+  text-align: center;
+}
+
+.ModalTitle {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.ModalInput {
+  width: calc(100% - 20px);
+  margin-bottom: 20px;
+}
+
+.ModalButton {
+  width: calc(50% - 5px);
+  margin-right: 10px;
+}
+
+.ModalButton:last-child {
+  margin-right: 0;
+}

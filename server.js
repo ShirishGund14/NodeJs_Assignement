@@ -3,7 +3,6 @@ const mongoose= require('mongoose');
 require('dotenv').config();
 const cors=require('cors');
 const moragan = require("morgan");
-const bodyParser=require('body-parser');
 const AdminRoutes=require('./Routes/AdminRoutes');
 const UserRoutes=require('./Routes/UserRoutes');
 
