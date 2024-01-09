@@ -21,11 +21,15 @@ app.use(express.json());
 app.use(moragan("dev"));
 
 
+
 //ALL routs
 app.use('/admin-api',AdminRoutes);
 app.use('/user-api',UserRoutes);
+
+app.use("/uploads",express.static("./uploads"));
 
 
 app.listen(process.env.PORT,()=>{
     console.log( `Server is running on port number ${process.env.PORT}`);
 })
+

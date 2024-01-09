@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
 
-const Cardinfo = ({ userinfo }) => {
+const Cardinfo = ({ userinfo ,role}) => {
   const [updatedInfo, setUpdatedInfo] = useState({
     name: userinfo.name,
     email: userinfo.email,
@@ -28,7 +28,7 @@ const Cardinfo = ({ userinfo }) => {
 
   const handleUpdate = async () => {
     try {
-      // Make an API call to update user information
+      
       const { data } = await axios.put(
         `http://localhost:8080/user-api/UpdateUser/${userinfo._id}`,
         updatedInfo
@@ -73,6 +73,7 @@ const Cardinfo = ({ userinfo }) => {
     }
   };
 
+
   const handleInputChange = (field, value) => {
     setUpdatedInfo((prevInfo) => ({ ...prevInfo, [field]: value }));
   };
@@ -83,10 +84,13 @@ const Cardinfo = ({ userinfo }) => {
     navigate('/');
   };
 
+  
+  console.log(userinfo)
+
   return (
     <>
       <Card sx={{ maxWidth: 345, bgcolor: 'black', color: 'white', borderRadius: '15px' }}>
-        <CardMedia sx={{ height: 140 }} image="/static/images/cards/contemplative-reptile.jpg" title="green iguana" />
+        <CardMedia sx={{ height: 140 }} image={`${userinfo.profileImage}`} title="green iguana" />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             Name:{' '}

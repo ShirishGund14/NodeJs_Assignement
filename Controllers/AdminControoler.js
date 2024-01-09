@@ -10,13 +10,7 @@ exports.CreateAdminController=async(req,res)=>{
 
         const {name,email,phone,password,role,profile_url}=req.body;
         
-
-        if(role!='Admin'){
-            return res.json({
-                msg:'You are Admin, select the checkbox',
-                success:false
-            })
-        }
+         console.log(name,email,phone)
         if(!name || !email || !password ) {
             return res.json({
                 msg:"all fields are necessary",
@@ -42,7 +36,7 @@ exports.CreateAdminController=async(req,res)=>{
             email,
             phone,
             password:hashedpass,
-            profile_url,
+            profileImage:profile_url,
             role:role
         })
 

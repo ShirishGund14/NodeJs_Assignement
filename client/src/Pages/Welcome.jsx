@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import Cardinfo from '../Components/Card';
 import Adminpage from './Adminpage';
-import Profile from '../Components/profile';
 
 
 const Welcome = () => {

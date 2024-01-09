@@ -2,6 +2,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Modal, TextField, Avatar } from '@mui/material';
+import { MdEdit ,MdDelete } from "react-icons/md";
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import Cardinfo from '../Components/Card';
+
+
+
+
+
+
+
+
+
+
+
 
 // Define the AdminDashboard component
 const AdminDashboard = () => {
@@ -93,35 +116,44 @@ const AdminDashboard = () => {
 
   // JSX for rendering the component
   return (
+
+
+<>
+
     <div className="container">
       <h3>Admin Dashboard</h3>
       <div>
+
         <h4>User List</h4>
         <div className="heading">
           <label htmlFor="">Name</label>
           <label htmlFor="">Email</label>
           <label htmlFor="">Phone</label>
         </div>
+
         <ul>
           {/* Mapping through users and rendering user details */}
-          {users.map((user) => (
+          {users.map((user) => (    
+
             <li style={{ listStyle: 'none' }} key={user._id} onClick={() => handleUserSelection(user)}>
-              <div className="record">
-                <div className="avtar">
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" sx={{ width: 56, height: 56 }} />
+
+               <div className="record">
+
+                  <Avatar  className="avtar" alt="Remy Sharp" src={`${user.profileImage}`} sx={{ width: 56, height: 56 }} />
+          
+               <div> {user.name} {user.email} {user.phone}  </div>
+
+                <div className="buttons">
+                  <button variant="outlined" onClick={(e) => handleEditButtonClick(e, user)}> <MdEdit/> </button>
+                  <button variant="outlined" onClick={() => handleDeleteUser(user)}> <MdDelete />  </button>
                 </div>
-                <div className="userinfo">
-                  {user.name} {user.email} {user.phone}
-                  {/* Edit and Delete buttons */}
-                  <Button variant="outlined" onClick={(e) => handleEditButtonClick(e, user)}>
-                    Edit
-                  </Button>
-                  <Button variant="outlined" onClick={() => handleDeleteUser(user)}>
-                    Delete
-                  </Button>
-                </div>
-              </div>
+
+              </div> 
+
+              
+
             </li>
+
           ))}
         </ul>
       </div>
@@ -157,7 +189,9 @@ const AdminDashboard = () => {
                 onChange={(e) => setUpdatedUserData({ ...updatedUserData, phone: e.target.value })}
               />
               {/* Update and Close buttons */}
+              
               <Button className="ModalButton" variant="outlined" onClick={handleUpdateUser}>
+                
                 Update User
               </Button>
               <Button className="ModalButton" variant="outlined" onClick={() => setIsModalOpen(false)}>
@@ -168,6 +202,9 @@ const AdminDashboard = () => {
         </Modal>
       )}
     </div>
+
+
+    </>
   );
 };
 

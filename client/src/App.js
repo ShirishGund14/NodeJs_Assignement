@@ -4,7 +4,7 @@ import{BrowserRouter,Route,Routes} from 'react-router-dom'
 import Signup from './Pages/Signup';
 import Login from './Pages/Login';
 import Welcome from './Pages/Welcome';
-import Profile from './Components/profile';
+
 
 
 
