@@ -22,7 +22,7 @@ exports.CreateUserController = async (req, res) => {
         //    console.log('user file',filename);
 
 
-        console.log('Full Request Object:', profile_url);
+     //   console.log('Full Request Object:', profile_url);
 
         if (!name || !email || !password || !phone) {
             return res.json({
@@ -103,7 +103,7 @@ exports.UserLoginController = async (req, res) => {
         // console.log('password match',match);
         if (!match) {
 
-            console.log('data from backend');
+           // console.log('data from backend');
 
             return res.json({
                 success: false,

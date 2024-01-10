@@ -1,81 +1,57 @@
-/* General styles for the container */
-.container {
-  max-width: 800px;
-  margin: auto;
-}
-
-h3 {
-  text-align: center;
-}
-
-/* Styles for the user list */
-.heading {
+.btns{
   display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  margin-bottom: 10px;
+  justify-content: flex-end;
+}
+
+.buttons{
+  width: 3px;
+  background-color: transparent;
+  color: black;
+}
+
+.buttons:hover{
+  background-color: transparent;
+  color: rgb(132, 71, 232);
 }
 
 
-.record:hover {
-  background-color: #f0f0f0;
-}
-
-.avtar {
-  margin-right: 12px;
-}
-
-.userinfo {
+.ModalContainer {
   display: flex;
   align-items: center;
-}
-
-/* Modal styles */
-.ModalContainer {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 100%;
-  margin: auto;
+  justify-content: center;
+  height: 100vh;
+ 
 }
 
 .ModalContent {
-  text-align: center;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  color: white;
 }
 
 .ModalTitle {
-  font-size: 24px;
+  font-size: 1.5rem;
   margin-bottom: 20px;
 }
 
 .ModalInput {
-  width: calc(100% - 20px);
-  margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 15px;
 }
 
 .ModalButton {
-  width: calc(50% - 5px);
+  margin-top: 15px;
   margin-right: 10px;
 }
 
-.ModalButton:last-child {
-  margin-right: 0;
+
+MuiInputBase-input{
+  color: white;
 }
 
-
-.avtar{
-  display: inline-block;
-}
-
-.record{
-  display: flex;
-  justify-content: space-evenly;
-  flex-direction: row;
-  flex-wrap: nowrap;
+.names{
+  margin-left: 5px;
 }

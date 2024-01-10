@@ -2,33 +2,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Modal, TextField, Avatar } from '@mui/material';
-import { MdEdit ,MdDelete } from "react-icons/md";
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
-import Cardinfo from '../Components/Card';
+import { MdEdit, MdDelete } from "react-icons/md";
+import './AdminDashboard.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
 
 
 
 
 
-
-
-
-
-
-
-
-// Define the AdminDashboard component
 const AdminDashboard = () => {
-  // State variables
+ 
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [updatedUserData, setUpdatedUserData] = useState({
@@ -43,17 +34,21 @@ const AdminDashboard = () => {
     fetchAllUsers();
   }, []);
 
-  // Function to fetch all users from the server
+  //  fetch all users
   const fetchAllUsers = async () => {
     try {
       const response = await axios.get('http://localhost:8080/admin-api/Allusers');
       setUsers(response.data);
+      if(response.data.success){
+        toast.success(response.data.msg);
+      }
     } catch (error) {
+      toast.error(error);
       console.error('Error fetching users:', error);
     }
   };
 
-  // Function to handle user selection
+  //  handle user selection
   const handleUserSelection = (user) => {
     setSelectedUser(user);
     setUpdatedUserData({
@@ -63,12 +58,13 @@ const AdminDashboard = () => {
     });
   };
 
-  // Function to handle user update
+  //  handle user update
   const handleUpdateUser = async () => {
     try {
       const response = await axios.put(`http://localhost:8080/admin-api/UpdateUser/${selectedUser._id}`, updatedUserData);
 
       if (response.data.success) {
+        toast.success(response.data.msg);
         setUsers(users.map((user) => (user._id === selectedUser._id ? response.data.user : user)));
         setSelectedUser(null);
         setUpdatedUserData({
@@ -79,8 +75,9 @@ const AdminDashboard = () => {
         setIsModalOpen(false);
       }
 
-      console.log(response.data.msg);
+      //console.log(response.data.msg);
     } catch (error) {
+      toast.error(error);
       console.error('Error updating user:', error);
     }
   };
@@ -91,6 +88,7 @@ const AdminDashboard = () => {
       const response = await axios.delete(`http://localhost:8080/admin-api/DeleteUser/${selectedUser._id}`);
 
       if (response.data.msg === 'User deleted successfully') {
+        toast.success(response.data.msg);
         setUsers(users.filter((user) => user._id !== selectedUser._id));
         setSelectedUser(null);
         setUpdatedUserData({
@@ -101,8 +99,9 @@ const AdminDashboard = () => {
         setIsModalOpen(false);
       }
 
-      console.log(response.data.msg);
+     // console.log(response.data.msg);
     } catch (error) {
+      toast.error(error);
       console.error('Error deleting user:', error);
     }
   };
@@ -118,90 +117,88 @@ const AdminDashboard = () => {
   return (
 
 
-<>
+    <>
+      <ToastContainer/>
+      <div >
+        <h3>Admin Dashboard</h3>
 
-    <div className="container">
-      <h3>Admin Dashboard</h3>
-      <div>
+        <div>
 
-        <h4>User List</h4>
-        <div className="heading">
-          <label htmlFor="">Name</label>
-          <label htmlFor="">Email</label>
-          <label htmlFor="">Phone</label>
+            {users.map((user) => (
+                  <>
+                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                  <ListItem>
+
+                    <ListItemAvatar>
+                      <Avatar className="avtar" alt="Remy Sharp" src={`${user.profileImage}`} sx={{ width: 56, height: 56 }} />
+                    </ListItemAvatar>
+                    
+                    <div className="names">
+                    <ListItemText primary={`${user.name}`} secondary={`${user.email}`} /> 
+                    </div>
+          
+                     <div className='btns'>
+                     <button className='buttons' onClick={(e) => handleEditButtonClick(e, user)}> <MdEdit /> </button>
+                    <button className='buttons'onClick={() => handleDeleteUser(user)}> <MdDelete />  </button>
+                     </div>
+                  </ListItem>
+                </List >
+
+                </>
+
+            ))}
+      
+
+
         </div>
 
-        <ul>
-          {/* Mapping through users and rendering user details */}
-          {users.map((user) => (    
 
-            <li style={{ listStyle: 'none' }} key={user._id} onClick={() => handleUserSelection(user)}>
+        {/* Modal for updating user details */}
 
-               <div className="record">
+        {selectedUser && (
+          <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <div className="ModalContainer">
+              <div className="ModalContent">
+                <h2 className="ModalTitle">Update User</h2>
+                {/* Input fields for updating user details */}
+                <TextField
+                  className="ModalInput"
+                  label="Name"
+                  type="text"
+                  name="name"
+                  value={updatedUserData.name}
+                  onChange={(e) => setUpdatedUserData({ ...updatedUserData, name: e.target.value })}
+                />
+                <TextField
+                  className="ModalInput"
+                  label="Email"
+                  type="text"
+                  name="email"
+                  value={updatedUserData.email}
+                  onChange={(e) => setUpdatedUserData({ ...updatedUserData, email: e.target.value })}
+                />
+                <TextField
+                  className="ModalInput"
+                  label="Phone"
+                  type="text"
+                  name="phone"
+                  value={updatedUserData.phone}
+                  onChange={(e) => setUpdatedUserData({ ...updatedUserData, phone: e.target.value })}
+                />
+                {/* Update and Close buttons */}
 
-                  <Avatar  className="avtar" alt="Remy Sharp" src={`${user.profileImage}`} sx={{ width: 56, height: 56 }} />
-          
-               <div> {user.name} {user.email} {user.phone}  </div>
+                <Button className="ModalButton" variant="outlined" onClick={handleUpdateUser}>
 
-                <div className="buttons">
-                  <button variant="outlined" onClick={(e) => handleEditButtonClick(e, user)}> <MdEdit/> </button>
-                  <button variant="outlined" onClick={() => handleDeleteUser(user)}> <MdDelete />  </button>
-                </div>
-
-              </div> 
-
-              
-
-            </li>
-
-          ))}
-        </ul>
-      </div>
-      {/* Modal for updating user details */}
-      {selectedUser && (
-        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <div className="ModalContainer">
-            <div className="ModalContent">
-              <h2 className="ModalTitle">Update User</h2>
-              {/* Input fields for updating user details */}
-              <TextField
-                className="ModalInput"
-                label="Name"
-                type="text"
-                name="name"
-                value={updatedUserData.name}
-                onChange={(e) => setUpdatedUserData({ ...updatedUserData, name: e.target.value })}
-              />
-              <TextField
-                className="ModalInput"
-                label="Email"
-                type="text"
-                name="email"
-                value={updatedUserData.email}
-                onChange={(e) => setUpdatedUserData({ ...updatedUserData, email: e.target.value })}
-              />
-              <TextField
-                className="ModalInput"
-                label="Phone"
-                type="text"
-                name="phone"
-                value={updatedUserData.phone}
-                onChange={(e) => setUpdatedUserData({ ...updatedUserData, phone: e.target.value })}
-              />
-              {/* Update and Close buttons */}
-              
-              <Button className="ModalButton" variant="outlined" onClick={handleUpdateUser}>
-                
-                Update User
-              </Button>
-              <Button className="ModalButton" variant="outlined" onClick={() => setIsModalOpen(false)}>
-                Close
-              </Button>
+                  Update User
+                </Button>
+                <Button className="ModalButton" variant="outlined" onClick={() => setIsModalOpen(false)}>
+                  Close
+                </Button>
+              </div>
             </div>
-          </div>
-        </Modal>
-      )}
-    </div>
+          </Modal>
+        )}
+      </div>
 
 
     </>

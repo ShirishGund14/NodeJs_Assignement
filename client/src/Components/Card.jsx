@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
 
+
 const Cardinfo = ({ userinfo ,role}) => {
   const [updatedInfo, setUpdatedInfo] = useState({
     name: userinfo.name,
@@ -85,7 +86,7 @@ const Cardinfo = ({ userinfo ,role}) => {
   };
 
   
-  console.log(userinfo)
+  //console.log(userinfo)
 
   return (
     <>

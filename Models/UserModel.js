@@ -11,20 +11,24 @@ const userSchema = new mongoose.Schema({
     phone: { 
         type: String, 
         unique: true, 
-        required: true },
+        required: true 
+    },
     name: { 
         type: String,
-         required: true },
+         required: true 
+        },
     profileImage: {
         type:String,
     },
     password: { 
         type: String,
-         required: true },
+         required: true 
+        },
     role: { 
         type: String, 
         enum: ['Admin', 'User'], 
-        default: 'User' },
+        default: 'User'
+     },
   });
   
 const User = mongoose.model('User', userSchema);

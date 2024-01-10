@@ -10,7 +10,7 @@ exports.CreateAdminController=async(req,res)=>{
 
         const {name,email,phone,password,role,profile_url}=req.body;
         
-         console.log(name,email,phone)
+         //console.log(name,email,phone)
         if(!name || !email || !password ) {
             return res.json({
                 msg:"all fields are necessary",
@@ -63,7 +63,7 @@ exports.AdminLoginController=async(req,res)=>{
 
         const {email,password,role}=req.body;
 
-        console.log('Adminlogin',email,password,role);
+       // console.log('Adminlogin',email,password,role);
 
         if( !email || !password ) {
             return res.json({

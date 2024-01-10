@@ -71,7 +71,7 @@ const Signup = () => {
 
       try {
         const response = await axios.post(`${apiEndpoint}`, inputs);
-        console.log('response data', response.data);
+       // console.log('response data', response.data);
 
         if (response.data.success) {
           toast.success(response.data.msg);
